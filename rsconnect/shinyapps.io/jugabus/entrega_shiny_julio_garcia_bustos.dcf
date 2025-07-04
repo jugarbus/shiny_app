@@ -1,0 +1,10 @@
+name: entrega_shiny_julio_garcia_bustos
+title:
+username: jugabus
+account: jugabus
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 14684636
+bundleId: 10231361
+url: https://jugabus.shinyapps.io/entrega_shiny_julio_garcia_bustos/
+version: 1

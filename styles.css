@@ -1,0 +1,96 @@
+/* Estilo de fondo */
+body {
+  background-color: #ffffff;  /* Fondo blanco */
+  color: #333;  /* Texto oscuro para mayor legibilidad en fondo blanco */
+  font-family: Arial, sans-serif;  /* Fuente Arial */
+}
+
+/* Estilo de las cabeceras */
+h5 {
+  color: #4c7aaf;  /* Color azul claro para las cabeceras */
+  font-size: 18px;  /* Tamaño de fuente de 18px */
+}
+
+/* Estilo para los botones */
+.btn {
+  background-color: #007bff;  /* Fondo azul para los botones */
+  color: white;  /* Texto blanco */
+  border-radius: 5px;  /* Bordes redondeados */
+  border: none;  /* Sin borde */
+  padding: 8px 16px;  /* Relleno */
+}
+
+.btn:hover {
+  background-color: #0056b3;  /* Color más oscuro cuando el botón está en hover */
+}
+
+/* Estilo para los paneles laterales */
+.sidebar-panel {
+  background-color: #f8f9fa;  /* Fondo muy claro para el panel lateral */
+  color: #333;  /* Texto oscuro */
+  padding: 15px;  /* Espaciado dentro del panel */
+  border-right: 1px solid #ddd;  /* Borde sutil a la derecha */
+}
+
+/* Estilo para los iconos de Font Awesome (fa) */
+.fa-bell {
+  color: #f1c40f;  /* Color dorado para los iconos de campana */
+}
+
+/* Estilo para las tablas */
+table {
+  width: 100%;  /* Las tablas ocupan el 100% del ancho disponible */
+  border-collapse: collapse;  /* Colapsa las fronteras de la tabla */
+  background-color: #ffffff;  /* Fondo blanco para las tablas */
+}
+
+table, th, td {
+  border: 1px solid #ddd;  /* Bordes finos y grises */
+}
+
+th, td {
+  padding: 10px;  /* Espaciado dentro de las celdas */
+  text-align: left;  /* Alineación del texto a la izquierda */
+  color: #333;  /* Texto oscuro en las celdas */
+}
+
+th {
+  background-color: #f2f2f2;  /* Fondo muy claro para los encabezados */
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;  /* Fondo alternado para las filas (gris claro) */
+}
+
+tr:hover {
+  background-color: #f1f1f1;  /* Fondo al pasar el cursor sobre las filas */
+}
+
+/* Estilo para los inputs y selectores */
+input, select, textarea {
+  background-color: #ffffff;  /* Fondo blanco */
+  color: #333;  /* Texto oscuro */
+  border: 1px solid #ccc;  /* Borde gris claro */
+  border-radius: 5px;  /* Bordes redondeados */
+  padding: 8px;  /* Relleno */
+}
+
+/* Estilo para los sliders */
+.slider {
+  background-color: #f2f2f2;  /* Fondo muy claro para el slider */
+  border-radius: 5px;  /* Bordes redondeados */
+}
+
+.slider:focus {
+  outline: none;  /* Eliminar el borde cuando se enfoca */
+}
+
+/* Estilo para los paneles de contenido */
+.panel {
+  background-color: #ffffff;  /* Fondo blanco para los paneles de contenido */
+  border: 1px solid #ddd;  /* Borde gris claro */
+  color: #333;  /* Texto oscuro */
+  padding: 15px;  /* Relleno */
+}
+
+

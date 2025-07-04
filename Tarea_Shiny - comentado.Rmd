@@ -1,0 +1,306 @@
+---
+title: "Tarea_Shiny"
+author: "Julio"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+
+```{r}
+library(shiny)
+library(shinythemes)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(DT)
+library(plotly)
+```
+
+
+https://jugabus.shinyapps.io/entrega_shiny_julio_garcia_bustos/
+
+Copia el código con la interfaz que has creado antes. Completa la aplicación añadiendo los elementos de salida que se muestran en la aplicación completa: [este enlace][https://fermaji.shinyapps.io/AppEjFinal/].
+
+Lo que se muestra es un ejemplo, pero se da total libertad para modificar la apariencia de la app!
+
+La funcionalidad mínima debe incluir:
+
+- Generación automática de los elementos de la UI a partir del fichero cargado
+- Crear correctamente el selector de máquinas por identificador de matrícula única.
+- Representar la probabilidad de orden (`p_orden`) al seleccionar cada máquina.
+- Funcionamiento correcto al seleccionar/deseleccionar las alarmas, tanto como figura como en la tabla.
+- Funcionamiento correcto del widget del calendario para acotar por fechas.
+- Funcionamiento correcto del slider selector de ancho de bin para el histograma.
+- Representación correcta del histograma y boxplot por alarma.
+- Funcionamiento correcto del boxplot para todas las máquinas.
+
+OPCIONALMENTE:
+
+- Filtrar por alarmas activas/inactivas en la máquina seleccionada y mostrarlo al usuario.
+- Advertir de errores en el formato al cargar el fichero.
+- Posibilidad de seleccionar entre histograma o boxplot en las estadísticas.
+- Hacer interactiva la gráfica de probabilidad de orden y la de las alarmas
+- Uso de iconos.
+- Añadir estilos personalizados (ficheros css).
+- Publicar la app en un servidor (https://www.shinyapps.io/).
+
+
+
+```{r}
+ui <- navbarPage(theme = shinytheme("yeti"), "App Máster Ciencia de Datos",
+                 
+  # Incluir archivo CSS para personalizar el estilo visual
+  tags$head(
+    includeCSS("styles.css")  # Ruta al archivo CSS
+  ),
+                 
+  # Pestaña para selección de máquina
+  tabPanel("Selección de máquina", 
+           sidebarLayout(
+             sidebarPanel(
+               h5("MÁQUINA"),  # Título
+               fileInput("DatosFichero", "Selecciona un fichero"),  # Carga de archivo
+               uiOutput("select_matricula"),  # SelectInput dinámico para la matrícula de la máquina
+              ),
+             mainPanel(
+               h5("Probabilidad de orden"),  # Título
+               plotOutput('graf1')  # Gráfico de la probabilidad de orden
+             )
+           )
+  ),
+  
+  # Menú de navegación para estado de la máquina
+  navbarMenu("Estado de la máquina",
+           # Pestaña para evolución temporal de las alarmas
+           tabPanel("Evolución temporal alarmas", 
+                    sidebarLayout(
+                      sidebarPanel(
+                         h5("Filtrar por estado de alarma"),  # Título
+                        radioButtons("estado_alarma1", "Selecciona estado de alarma", 
+                                     choices = c("Activas" = "activa", "Inactivas" = "inactiva")),  # Filtrar alarmas activas o inactivas
+                        h5("Selecciona una alarma"),  # Título
+                        uiOutput("select_alarmas_radio")  # SelectInput dinámico para elegir alarma
+                      ),
+                      mainPanel(
+                        h5("Evolución temporal alarmas"),  # Título
+                        plotlyOutput('graf2')  # Gráfico interactivo con Plotly
+                      )
+                    )
+           ),
+           # Pestaña para registros de la máquina
+           tabPanel("Registros de la máquina", 
+                     sidebarLayout(
+                        sidebarPanel(
+                          h5("Filtrar por estado de alarma"),  # Título
+                          radioButtons("estado_alarma2", "Selecciona estado de alarma", 
+                                       choices = c("Activas" = "activa", "Inactivas" = "inactiva")),  # Filtrar alarmas activas o inactivas
+                          uiOutput("select_alarmas_check")  # Checkboxes dinámico para seleccionar alarmas
+                        ),
+                        mainPanel(h5("Registros de la máquina seleccionada"), dataTableOutput('tabla1'))  # Tabla de registros
+                    )
+           )
+),
+  
+ # Pestaña para estadísticas globales temporales
+ tabPanel("Estadísticas Globales Temporales", 
+         sidebarLayout(
+           sidebarPanel(
+             h5("PERIODO Y ESTADÍSTICAS"),  # Título
+             dateRangeInput('rango_fecha', label = 'Selecciona el periodo', 
+                            min = '2016-01-01', max = '2025-02-13', 
+                            start = '2016-01-02', end = '2016-12-14', 
+                            format = "yyyy-mm-dd", separator= "a"),  # Selector de fechas
+             h5("SELECCIONAR ALARMA"),  # Título
+             uiOutput("select_alarma_hist"),  # SelectInput dinámico para seleccionar alarma
+             radioButtons("tipo_grafico", "Seleccionar tipo de gráfico:", 
+                          choices = c("Histograma" = "hist", "Boxplot" = "boxplot")),  # Selección de tipo de gráfico
+             # Panel condicional para histograma
+             conditionalPanel(
+               condition = "input.tipo_grafico == 'hist'",
+               sliderInput("slider1", label = "Número de bins del histograma", 
+                           min = 1, max = 10, value = 5, step = 1)  # Control deslizante para el número de bins
+             ),
+             # Panel condicional para boxplot
+             conditionalPanel(
+               condition = "input.tipo_grafico == 'boxplot'",
+               checkboxInput("Caja1", "Todas las máquinas", value = FALSE)  # Opción para mostrar boxplot de todas las máquinas
+             )
+           ),
+           mainPanel(
+             # Mostrar histograma si se selecciona 'hist'
+             conditionalPanel(
+               condition = "input.tipo_grafico == 'hist'",
+               h5("Histograma de la alarma seleccionada"),  # Título
+               plotOutput('hist1')  # Histograma
+             ),
+             # Mostrar boxplot si se selecciona 'boxplot'
+             conditionalPanel(
+               condition = "input.tipo_grafico == 'boxplot'",
+               h5("Boxplot de la alarma seleccionada"),  # Título
+               plotOutput('boxplot1')  # Boxplot
+             )
+           )
+         )
+)
+)
+
+server <- function(input, output, session) {
+  
+  # Reactivo para cargar el archivo .Rdata
+  df_react <- reactive({
+    req(input$DatosFichero)
+
+    extension <- tools::file_ext(input$DatosFichero$name)
+    
+    # Comprobar si la extensión no es .Rdata
+    if (extension != "Rdata") {
+        showModal(modalDialog(
+            title = "Formato de archivo incorrecto",  # Título del modal
+            "El archivo proporcionado debe tener la extensión .Rdata.",  # Mensaje de error
+            easyClose = TRUE,
+            footer = NULL
+        ))
+        return(NULL)  # Detener la ejecución si la extensión no es válida
+    }
+    
+    load(input$DatosFichero$datapath)  # Cargar el archivo si es correcto
+    return(Datos)  # Retornar los datos cargados
+})
+  
+  # SelectInput dinámico para matrícula (máquina)
+  output$select_matricula <- renderUI({
+    datos <- df_react()
+    selectInput("Selectbox1", "Selecciona máquina", choices = unique(datos$matricula))  # Seleccionar matrícula
+  })
+  
+  # Filtrar los datos según la matrícula seleccionada
+  df_maq <- reactive({
+    datos <- df_react()
+    req(input$Selectbox1)
+    datos %>% filter(matricula == input$Selectbox1)  # Filtrar por matrícula seleccionada
+  })
+  
+
+  # Gráfico de la probabilidad de orden para la máquina seleccionada
+  output$graf1 <- renderPlot({
+    df_maq() %>% 
+      ggplot(aes(dia, p_orden, colour = p_orden)) + 
+      geom_point() + geom_line() + 
+      scale_color_gradient(low = "blue", high = "red") + 
+      labs(title = "Evolución de la probabilidad de orden", x = "Día", y = "Probabilidad de orden") +
+      theme_minimal()
+  })
+
+  # Selección dinámica de alarma en base al estado (activa/inactiva)
+  output$select_alarmas_radio <- renderUI({
+    datos <- df_maq()
+    req(input$estado_alarma1)
+    
+    if (input$estado_alarma1 == "activa") {
+      alarmas <- names(datos)[grep('^a.', names(datos))] %>% 
+        Filter(function(col) any(datos[[col]] == 1, na.rm = TRUE), .)  # Filtrar alarmas activas
+    } else {
+      alarmas <- names(datos)[grep('^a.', names(datos))] %>% 
+        Filter(function(col) all(datos[[col]] == 0, na.rm = TRUE), .)  # Filtrar alarmas inactivas
+    }
+    
+    radioButtons("radiobuttons1", "Selecciona la alarma a visualizar", choices = alarmas)  # Crear botones de radio con las alarmas
+  })
+
+  # Selección dinámica de alarmas para la tabla
+  output$select_alarmas_check <- renderUI({
+    datos <- df_maq()
+    req(input$estado_alarma2)
+    
+    if (input$estado_alarma2 == "activa") {
+      alarmas <- names(datos)[grep('^a.', names(datos))] %>% 
+        Filter(function(col) any(datos[[col]] == 1, na.rm = TRUE), .)  # Filtrar alarmas activas
+    } else {
+      alarmas <- names(datos)[grep('^a.', names(datos))] %>% 
+        Filter(function(col) all(datos[[col]] == 0, na.rm = TRUE), .)  # Filtrar alarmas inactivas
+    }
+    
+    checkboxGroupInput("GrupoCajas1", "Selecciona las alarmas para ver en la tabla", choices = alarmas, inline = FALSE)  # Crear checkboxes
+  })
+
+  # Gráfico de la alarma seleccionada en "Evolución temporal alarmas"
+  output$graf2 <- renderPlotly({
+    datos <- df_maq()
+    req(input$radiobuttons1)  # Asegurar que se ha seleccionado una alarma
+    
+    datos_filtrados <- datos %>% filter(!is.na(.data[[input$radiobuttons1]]))  # Filtrar datos no nulos
+    
+    p <- ggplot(datos_filtrados, aes(x = dia, y = .data[[input$radiobuttons1]])) + 
+      geom_point() + 
+      geom_line() +
+      theme_minimal() +
+      labs(title = "Gráfico de Alarma", x = "Día", y = input$radiobuttons1)
+    
+    ggplotly(p)  # Convertir a gráfico interactivo con plotly
+  })
+
+  # Mostrar la tabla de registros según la máquina seleccionada y las alarmas
+  output$tabla1 <- renderDataTable({
+    req(df_react(), input$Selectbox1, input$GrupoCajas1)
+    subset(df_react(), matricula == input$Selectbox1, select = c("matricula", "dia", input$GrupoCajas1, "p_orden"))  # Filtrar y mostrar la tabla
+  })
+
+  # SelectInput dinámico para seleccionar la alarma en el histograma o boxplot
+  output$select_alarma_hist <- renderUI({
+    datos <- df_react()
+    alarmas <- grep('^a.', colnames(datos), value = TRUE)  # Filtrar alarmas por nombre
+    selectInput("Selectbox2", "Alarma", choices = alarmas)  # Crear SelectInput para elegir alarma
+  })
+
+  # Datos reactivos para el histograma o boxplot
+  datos_alarma <- reactive({
+    req(input$Selectbox2, input$rango_fecha)
+    df_maq() %>% 
+      filter(dia >= input$rango_fecha[1], dia <= input$rango_fecha[2]) %>%  # Filtrar por fechas
+      select(.data[[input$Selectbox2]]) %>% 
+      drop_na()  # Eliminar valores faltantes
+  })
+
+  # Renderizar histograma
+  output$hist1 <- renderPlot({
+    req(input$Selectbox2, input$rango_fecha)
+    datos <- datos_alarma()
+    
+    ggplot(datos, aes(x = .data[[input$Selectbox2]])) + 
+      geom_histogram(binwidth = diff(range(datos[[input$Selectbox2]]))/input$slider1, 
+                     fill = "steelblue", color = "black", alpha = 0.7)
+  })
+
+  # Renderizar boxplot
+  output$boxplot1 <- renderPlot({
+    req(input$rango_fecha, input$Selectbox2)
+    datos <- df_react() %>%
+      filter(dia >= input$rango_fecha[1], dia <= input$rango_fecha[2]) %>%
+      select(matricula, dia, .data[[input$Selectbox2]]) %>%
+      drop_na()
+    
+    if (input$Caja1) {
+      ggplot(datos, aes(x = matricula, y = .data[[input$Selectbox2]])) + 
+        geom_boxplot(fill = "steelblue", color = "black", alpha = 0.7) +
+        labs(title = paste("Boxplots de", input$Selectbox2, "para todas las máquinas"), 
+             x = "Máquina", y = input$Selectbox2) +
+        theme_minimal() +
+        theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    } else {
+      datos %>% ggplot(aes(y = .data[[input$Selectbox2]])) + 
+        geom_boxplot(fill = "steelblue", color = "black", alpha = 0.7) +
+        labs(title = paste("Boxplot de", input$Selectbox2, "para la máquina seleccionada"), 
+             x = "", y = input$Selectbox2) +
+        theme_minimal()
+    }
+  })
+  
+}
+
+# Ejecutar la aplicación Shiny
+shinyApp(ui, server)
+
+```
+
+
+
