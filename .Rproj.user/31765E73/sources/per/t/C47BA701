@@ -3,7 +3,7 @@
     "path": "C:/Users/jugab/Proyectos/Entrega_Shiny_Julio_Garcia_Bustos/app.R",
     "project_path": "app.R",
     "type": "r_source",
-    "hash": "2531788143",
+    "hash": "1559652093",
     "contents": "",
     "dirty": false,
     "created": 1746430889889.0,
@@ -11,14 +11,16 @@
     "relative_order": 1,
     "properties": {
         "source_window_id": "",
-        "Source": "Source"
+        "Source": "Source",
+        "cursorPosition": "0,0",
+        "scrollLine": "0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1738476562,
+    "lastKnownWriteTime": 1746432707,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1738476562,
+    "last_content_update": 1746432707,
     "read_only": false,
     "read_only_alternatives": []
 }
